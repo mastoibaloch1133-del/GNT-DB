@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⫷𝐍𝐀𝐙𝐈𝐊 𝐓𝐄𝐂𝐇⫸ | Elite SIM Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: #111111;
+            --text-main: #ffffff;
+            --border-color: #222;
+            --accent-gold: #f59e0b;
+        }
+
+        .light-mode {
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --border-color: #e2e8f0;
+            --accent-gold: #d97706;
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            font-family: 'Outfit', sans-serif; 
+            color: var(--text-main);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .stealth-card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 14px;
+        }
+
+        .input-field {
+            background: rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: black;
+            font-weight: 800;
+        }
+
+        .float-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: #25D366;
+            color: white;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: transform 0.3s;
+        }
+        .float-btn:hover { transform: scale(1.1); }
+
+        .theme-toggle {
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--accent-gold);
+            font-size: 13px;
+        }
+
+        .field-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 5px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .field-row:last-child { border-bottom: none; }
+
+        .field-key {
+            font-size: 10.5px;
+            font-weight: 700;
+            opacity: 0.65;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            flex-shrink: 0;
+            padding-top: 1px;
+        }
+        .field-val {
+            font-size: 12px;
+            font-weight: 700;
+            text-align: right;
+            word-break: break-word;
+        }
+        .field-val.num { color: var(--accent-gold); }
+    </style>
+</head>
+<body class="py-5 px-4">
+
+    <!-- Header -->
+    <div class="max-w-md mx-auto flex justify-between items-center mb-5">
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <i id="themeIcon" class="fas fa-moon"></i>
+        </div>
+        <h1 class="text-lg font-black tracking-tighter">⫷𝐍𝐀𝐙𝐈𝐊 <span class="text-amber-500">𝐓𝐄𝐂𝐇⫸</span></h1>
+    </div>
+
+    <div class="max-w-md mx-auto">
+        <!-- Search Card -->
+        <div class="stealth-card p-4 mb-5">
+            <p class="text-[9px] uppercase tracking-widest font-bold opacity-60 mb-3">Database Query v3.0</p>
+            
+            <input type="text" id="phoneInput" placeholder="Enter Mobile Number..." 
+                class="input-field w-full px-4 py-3 rounded-lg text-sm font-medium outline-none focus:border-amber-500 mb-3">
+            
+            <button onclick="fetchData()" id="searchBtn" class="btn-gold w-full py-3 rounded-lg flex items-center justify-center gap-2 active:scale-95 transition-all text-sm">
+                <span id="btnText">SEARCH SYSTEM</span>
+                <div id="btnLoader" class="hidden w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
+            </button>
+        </div>
+
+        <!-- Results -->
+        <div id="contentArea" class="hidden space-y-4">
+            <div id="captureArea" class="stealth-card overflow-hidden">
+                <div class="px-3 py-2 border-b border-black/5 dark:border-white/5 flex justify-between items-center opacity-70">
+                    <span class="text-[9px] font-mono">ID: NAZIK-2026-X</span>
+                    <span id="reportDate" class="text-[9px] font-mono"></span>
+                </div>
+                
+                <div id="resultsList" class="p-4 space-y-3"></div>
+
+                <div class="px-4 py-4 border-t border-black/5 dark:border-white/5 text-center bg-black/5">
+                    <p class="text-[8px] opacity-50 uppercase tracking-widest mb-0.5">Developer & Admin</p>
+                    <p class="text-base font-black uppercase tracking-tighter">GNT-OWNER-MASTOI</p>
+                </div>
+            </div>
+
+            <button onclick="takeScreenshot()" class="w-full bg-slate-500/10 hover:bg-slate-500/20 py-3 rounded-lg border border-dashed border-slate-500/30 font-bold transition-all flex items-center justify-center gap-2 text-xs">
+                <i class="fas fa-camera text-amber-500"></i>
+                Save Result to Gallery
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 text-center pb-6">
+            <p class="text-[10px] opacity-50 mb-3">Stay updated with our latest tools</p>
+            <a href="https://whatsapp.com/channel/0029VbDLdAz5K3zUnAgCuv2S" target="_blank" 
+               class="inline-flex items-center gap-2 bg-amber-500 text-black px-6 py-2.5 rounded-full font-black text-[11px] hover:shadow-lg hover:shadow-amber-500/20 transition-all">
+                <i class="fab fa-whatsapp"></i> FOLLOW OFFICIAL CHANNEL
+            </a>
+        </div>
+    </div>
+
+    <a href="https://wa.me/923320000" target="_blank" class="float-btn">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script>
+        // Theme Toggle Logic
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+            body.classList.toggle('light-mode');
+            icon.className = body.classList.contains('light-mode') ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        async function fetchData() {
+            const num = document.getElementById('phoneInput').value;
+            if(!num) return alert("Number required");
+
+            const btnText = document.getElementById('btnText');
+            const loader = document.getElementById('btnLoader');
+
+            btnText.classList.add('hidden');
+            loader.classList.remove('hidden');
+            document.getElementById('contentArea').classList.add('hidden');
+            document.getElementById('resultsList').innerHTML = '';
+
+            try {
+                const response = await fetch(`https://ft-simdb.ftshehryar10044.workers.dev/ft/api?num=${num}`);
+                const res = await response.json();
+
+                document.getElementById('reportDate').innerText = new Date().toLocaleString();
+
+                function flattenObject(ob, prefix=''){
+                    let out = {};
+                    if(typeof ob !== 'object' || ob === null) return out;
+                    for(let i in ob){
+                        if(!Object.prototype.hasOwnProperty.call(ob,i)) continue;
+                        let k = prefix ? `${prefix}_${i}` : i;
+                        let v = ob[i];
+                        if(v !== null && typeof v === 'object'){
+                            if(Array.isArray(v)){
+                                v.forEach((item, idx) => {
+                                    if(typeof item === 'object' && item !== null){
+                                        Object.assign(out, flattenObject(item, `${k}_${idx+1}`));
+                                    } else {
+                                        out[`${k}_${idx+1}`] = item;
+                                    }
+                                });
+                            } else {
+                                Object.assign(out, flattenObject(v, k));
+                            }
+                        } else {
+                            out[k] = v;
+                        }
+                    }
+                    return out;
+                }
+
+                function extractAllRecords(data){
+                    let found = [];
+                    if(!data) return found;
+                    let root = data;
+                    if(typeof data === 'string'){
+                        try{ root = JSON.parse(data); }catch(e){ root = { result:data }; }
+                    }
+                    let payload = root.data || root.result || root.results || root.records || root.response || root.sim_data || root;
+
+                    let rawList = [];
+                    if(Array.isArray(payload)){
+                        payload.forEach(item => {
+                            let flat = flattenObject(item);
+                            if(Object.keys(flat).length > 0) rawList.push(flat);
+                        });
+                    } else if(typeof payload === 'object' && payload !== null){
+                        let flat = flattenObject(payload);
+                        if(Object.keys(flat).length > 0) rawList.push(flat);
+                    }
+
+                    rawList.forEach(rec => {
+                        let groups = {};
+                        let hasPrefixed = false;
+
+                        for(let [key, val] of Object.entries(rec)){
+                            if(val === null || val === undefined || val === '') continue;
+
+                            let m1 = key.match(/(?:truecaller\s*data|sim\s*details?|details?|data|rec|record|result|user|sim)?[\s_:-]*(\d+)[\s_:-]+(.*)/i);
+                            let m2 = key.match(/^(.+?)[\s_:-]*(\d+)$/i);
+                            let isMeta = /^(query|raw|local|status|success|message|code)/i.test(key) || /query\s*raw|query\s*local/i.test(key);
+
+                            if(!isMeta && m1 && m1[1] && m1[2]){
+                                hasPrefixed = true;
+                                let g = m1[1];
+                                let f = m1[2].replace(/^(?:truecaller\s*data|sim\s*details?|details?|data|rec|record|result|user|sim)[\s_:-]*/i,'').trim() || key;
+                                if(!groups[g]) groups[g] = {};
+                                groups[g][f] = val;
+                            } else if(!isMeta && m2 && m2[1] && m2[2]){
+                                hasPrefixed = true;
+                                let f = m2[1].replace(/^(?:truecaller\s*data|sim\s*details?|details?|data|rec|record|result|user|sim)[\s_:-]*/i,'').trim() || key;
+                                let g = m2[2];
+                                if(!groups[g]) groups[g] = {};
+                                groups[g][f] = val;
+                            }
+                        }
+
+                        if(hasPrefixed && Object.keys(groups).length > 0){
+                            Object.keys(groups).sort((a,b) => parseInt(a)-parseInt(b)).forEach(g => {
+                                if(Object.keys(groups[g]).length > 0) found.push(groups[g]);
+                            });
+                        } else {
+                            found.push(rec);
+                        }
+                    });
+
+                    return found;
+                }
+
+                function renderFields(obj){
+                    let html = '';
+                    const skip = ['status','success','message','query_used','server_used','code','cached'];
+
+                    for(let [key,val] of Object.entries(obj)){
+                        let ck = key.toLowerCase().trim();
+                        ck = ck.replace(/^(?:truecaller\s*data|truecaller|true_caller|sim\s*details?|details?|data|rec|record)[\s_:-]*\d*[\s_:-]*/i,'').trim();
+
+                        if(skip.includes(ck) && Object.keys(obj).length > 2) continue;
+
+                        let dk = ck.replace(/_/g,' ').replace(/\b\w/g, l => l.toUpperCase());
+
+                        if(['nbr','number'].includes(ck) || ck.endsWith(' nbr') || ck.endsWith(' number')) dk = 'Mobile';
+                        else if(['nam','name'].includes(ck) || ck.endsWith(' nam') || ck.endsWith(' name')) dk = 'Name';
+                        else if(['cni','cnic'].includes(ck) || ck.endsWith(' cni') || ck.endsWith(' cnic')) dk = 'CNIC';
+                        else if(['adr','address'].includes(ck) || ck.endsWith(' adr') || ck.endsWith(' address')) dk = 'Address';
+
+                        let isNum = ck.includes('nbr') || ck.includes('num') || ck.includes('phone') || ck.includes('mobile');
+
+                        html += `
+                            <div class="field-row">
+                                <span class="field-key">${dk}</span>
+                                <span class="field-val ${isNum?'num':''}">${val !== null && val !== undefined ? val : 'N/A'}</span>
+                            </div>`;
+                    }
+                    return html;
+                }
+
+                function renderResults(records){
+                    const box = document.getElementById('resultsList');
+
+                    if(!records || records.length === 0){
+                        box.innerHTML = `
+                            <div class="text-center py-4">
+                                <i class="fas fa-database text-xl opacity-40 mb-2"></i>
+                                <p class="text-[11px] opacity-60">No records found. Try a different number.</p>
+                            </div>`;
+                        return;
+                    }
+
+                    let html = '';
+                    records.forEach((rec, idx) => {
+                        html += `
+                            <div class="p-3 rounded-lg bg-black/5 border border-black/5">
+                                <div class="text-[9px] font-bold text-amber-500 mb-2 uppercase tracking-wider">Record #${idx+1}</div>
+                                <div>${renderFields(rec)}</div>
+                            </div>`;
+                    });
+                    box.innerHTML = html;
+                }
+
+                const records = extractAllRecords(res);
+
+                if (records && records.length > 0) {
+                    renderResults(records);
+                    document.getElementById('contentArea').classList.remove('hidden');
+                } else {
+                    alert("No data found for this number.");
+                }
+            } catch (error) {
+                alert("Server error. Try again.");
+            } finally {
+                btnText.classList.remove('hidden');
+                loader.classList.add('hidden');
+            }
+        }
+
+        function takeScreenshot() {
+            const element = document.getElementById('captureArea');
+            html2canvas(element, { 
+                backgroundColor: document.body.classList.contains('light-mode') ? "#ffffff" : "#000000",
+                scale: 2 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `NAZIK_TECH_${Date.now()}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
